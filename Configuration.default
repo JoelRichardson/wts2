@@ -1,0 +1,20 @@
+# 
+if [ "${MGICONFIG}" = "" ]
+then
+    export MGICONFIG=/usr/local/mgi/live/mgiconfig
+fi
+source ${MGICONFIG}/master.config.sh
+###
+export WTS_BASE_URL="http://wts.informatics.jax.org"
+export WTS_DIR="/mgi/all/wts2_projects"
+###
+# The following values come from our WTS2 Jira project.
+# These settings must be kept in sync.
+#
+# ID of the "Top Ten by PI" queue. 
+export TOP10_ID="37"
+# ID of the PI custom field
+export PI_FIELD="customfield_10236"
+# ID of the PI priority field (called "sort order")
+export PI_PRI_FIELD="customfield_10221"
+###
