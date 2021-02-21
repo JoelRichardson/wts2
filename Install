@@ -6,7 +6,7 @@ else
     exit 1
 fi
 . ./Configuration
-python3 -m venv venv
+${PYTHON} -m venv venv
 . ./venv/bin/activate
 pip install requests
 deactivate
