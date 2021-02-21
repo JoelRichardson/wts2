@@ -92,7 +92,7 @@ def makeProjectDirectory (form) :
 
 # Returns the JQL specification of the Top-10 given queue id
 def getJQL (qid) :
-    url = 'https://mgi-jira.atlassian.net/rest/servicedeskapi/servicedesk/WTS2/queue/' + qid
+    url = '%s/rest/servicedeskapi/servicedesk/WTS2/queue/%s' % (JIRA_BASE_URL, qid)
     response = requests.request(
         "GET",
         url,
