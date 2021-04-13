@@ -9,6 +9,10 @@
 #    "cmd"      Either "renumber" or "new"
 #    "key"      If cmd == "new", key is the issue key.
 #
+# Examples:
+#    cmd=renumber
+#    cmd=new&key=WTS2-10
+#
 import os
 import sys
 import cgi
@@ -58,7 +62,7 @@ def isValidIssueId (issueId) :
 #
 def getMidLevelDir (key) :
     keyNum = int(key.split('-')[1])
-    return str(int(keyNum / 100))
+    return 100*math.floor(keyNum / 100) 
 #
 def makeDirectory (key) :
         try:
@@ -108,7 +112,6 @@ def getTopTenList () :
     jql = getJQL(TOP10_ID)
     fields = '%s,%s' % (PI_FIELD, PI_PRI_FIELD)
     url = JIRA_REST_URL + ('/search?jql=%s&fields=%s' % (jql, fields))
-    print(url)
     response = requests.request(
        "GET",
        url,
