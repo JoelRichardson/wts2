@@ -63,7 +63,7 @@ def isValidIssueId (issueId) :
 #
 def getMidLevelDir (key) :
     keyNum = int(key.split('-')[1])
-    return 100*math.floor(keyNum / 100) 
+    return str(100*math.floor(keyNum / 100))
 #
 def makeDirectory (key) :
         try:
