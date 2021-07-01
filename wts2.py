@@ -109,31 +109,45 @@ def getJQL (qid) :
     return jql
 
 # Returns the current top-10 list. For each issue, just return the issue key, the PI, and the sort order.
+# Jira only returns a max of 100 at a time, so have to code for multiple requests.
+# (We'll set the max to 50 to force an iteration so we know it works.)
 def getTopTenList () :
-    jql = getJQL(TOP10_ID)
-    fields = '%s,%s' % (PI_FIELD, PI_PRI_FIELD)
-    url = JIRA_REST_URL + ('/search?jql=%s&fields=%s' % (jql, fields))
-    response = requests.request(
-       "GET",
-       url,
-       headers=HEADERS,
-       auth=AUTH
-    )
+    startAt = 0
+    maxResults = 50
     top10 = []
-    jobj = json.loads(response.text)
-    for i in jobj['issues']:
-        key = i["key"]
-        pi = i['fields'][PI_FIELD]
-        if pi:
-            sortOrder = i['fields'][PI_PRI_FIELD]
-            piName = pi['value']
-            rec = {
-                'key' : key,
-                'pi' : piName,
-                'priority': sortOrder
-            }
-            if sortOrder != None:
-                top10.append(rec)
+    while True:
+        # Request the next batch
+        jql = getJQL(TOP10_ID)
+        fields = '%s,%s' % (PI_FIELD, PI_PRI_FIELD)
+        url = JIRA_REST_URL + \
+            ('/search?jql=%s&fields=%s&startAt=%d&maxResults=%d' % (jql, fields, startAt, maxResults))
+        response = requests.request(
+           "GET",
+           url,
+           headers=HEADERS,
+           auth=AUTH
+        )
+        # Parse the json and iterate over the issues
+        jobj = json.loads(response.text)
+        for i in jobj['issues']:
+            key = i['key']
+            pi = i['fields'][PI_FIELD]
+            if pi:
+                sortOrder = i['fields'][PI_PRI_FIELD]
+                piName = pi['value']
+                rec = {
+                    'key' : key,
+                    'pi' : piName,
+                    'priority': sortOrder
+                }
+                if sortOrder != None:
+                    top10.append(rec)
+        # end for
+        startAt += maxResults
+        if startAt >= jobj['total']:
+            break
+
+    #end while True
     return top10
 
 # Sets the sort order field of the given issue to the given value
